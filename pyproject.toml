@@ -1,0 +1,34 @@
+[build-system]
+requires = ["flit_core >=2,<3"]
+build-backend = "flit_core.buildapi"
+
+[tool.flit.metadata]
+module = "pypants"
+author = "Jonathan Drake"
+author-email = "jdrake@narrativescience.com"
+home-page = "https://github.com/NarrativeScience/pypants"
+license = "BSD-3-Clause"
+description-file = "README.md"
+requires = [
+    "astor<1,>=0.7.1",
+    "black==19.3b0",
+    "Click>=7.0",
+    "cookiecutter<2,>=1.6.0",
+    "networkx<3,>=2.2",
+    "python-slugify<2,>=1.2.0",
+]
+classifiers = [
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: BSD License",
+    "Programming Language :: Python :: 3",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+requires-python = ">=3.6,<4"
+keywords = "pants"
+
+[tool.flit.scripts]
+pypants = "pypants.cli:cli"
+
+[tool.flit.sdist]
+include = ["LICENSE.md"]
+exclude = ["tests/"]
