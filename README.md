@@ -134,6 +134,10 @@ type = library
 ; Flag denoting whether to generate a BUILD file.
 ; generate_build_file = true
 
+; Flag denoting whether to generate a python_binary target for local.py. This is
+; essentially an extra entry point. It's only used for specific package types.
+; generate_pytest_binary = false
+
 ; Flag denoting whether to include a python_binary target for pytest
 ; generate_pytest_binary = false
 
