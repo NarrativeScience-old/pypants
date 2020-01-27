@@ -28,6 +28,7 @@ class Config:
         extra_dependencies = ["lib/python_core/src", ...]
         extra_tags = ["my-tag", ...]
         generate_build_file = <bool>
+        generate_local_binary = <bool>
         generate_pytest_binary = <bool>
         include_test_coverage = <bool>
         type = "library"|"binary"|...
@@ -120,6 +121,13 @@ class Config:
     def generate_build_file(self) -> bool:
         """Flag denoting whether to generate a BUILD file"""
         return self._config.getboolean("package", "generate_build_file", fallback=True)
+
+    @property
+    def generate_local_binary(self) -> bool:
+        """Flag denoting whether to generate a python_binary target for local.py"""
+        return self._config.getboolean(
+            "package", "generate_local_binary", fallback=False
+        )
 
     @property
     def generate_pytest_binary(self) -> bool:

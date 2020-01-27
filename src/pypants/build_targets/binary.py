@@ -102,14 +102,38 @@ class PythonBinaryPackage(PythonPackage):
         )
         return node
 
+    def _generate_python_binary_local_ast_node(self) -> ast.Expr:
+        """Generate an AST node for a python_binary Pants target that runs local.py"""
+        node = ast.Expr(
+            value=ast.Call(
+                func=ast.Name(id="python_binary"),
+                args=[],
+                keywords=[
+                    ast.keyword(arg="name", value=ast.Str("local")),
+                    ast.keyword(
+                        arg="dependencies",
+                        value=ast.List(
+                            elts=[ast.Str("3rdparty/python:aiohttp"), ast.Str(":lib")]
+                        ),
+                    ),
+                    ast.keyword(
+                        arg="source", value=ast.Str(f"{self.package_name}/local.py")
+                    ),
+                    self._tags_keyword,
+                ],
+            )
+        )
+        return node
+
     def generate_build_file_ast_node(self) -> ast.Module:
         """Generate a Pants BUILD file as an AST module node"""
-        node = ast.Module(
-            body=[
-                self._generate_python_library_ast_node(
-                    name="lib", globs_path=f"{self.package_name}/**/*"
-                ),
-                self._generate_python_binary_cli_ast_node(),
-            ]
-        )
+        body = [
+            self._generate_python_library_ast_node(
+                name="lib", globs_path=f"{self.package_name}/**/*"
+            ),
+            self._generate_python_binary_cli_ast_node(),
+        ]
+        if self.config.generate_local_binary:
+            body.append(self._generate_python_binary_local_ast_node())
+        node = ast.Module(body=body)
         return node
