@@ -1,22 +1,26 @@
 """Contains functions for working with requirements.txt"""
 
+import configparser
 from copy import deepcopy
 import glob
 import json
 import logging
 import os
+import re
 import subprocess
 import sys
 import tarfile
 import tempfile
 from typing import Dict, List, Tuple, TYPE_CHECKING
+from urllib.parse import urlparse
 import zipfile
 
-import pkg_resources
+import requirements as requirements_parser
 
 from .config import PROJECT_CONFIG
 from .exceptions import (
     DistributionError,
+    InvalidGitFile,
     InvalidTopLevelFile,
     MissingDistributionMetadataFile,
     NoProjectName,
@@ -40,19 +44,6 @@ except FileNotFoundError:
 # Top-level Python package distribution names to ignore when generating the third-party
 # import map
 IGNORE_TOP_LEVEL_IMPORTS = {"testing", "tests", "test"}
-
-
-def _requirement_name(requirement: pkg_resources.Requirement) -> str:
-    """Build a full requirement project name that includes extras"""
-    name = requirement.name
-    if len(requirement.extras) > 1:
-        raise NotImplementedError(
-            f"Multiple requirement extras are not supported: {requirement.extras}"
-        )
-    elif len(requirement.extras) == 1:
-        name = f"{name}[{requirement.extras[0]}]"
-
-    return name
 
 
 def _parse_top_level_imports_from_file(
@@ -108,6 +99,39 @@ def _get_project_name_from_metadata_file(
         if line.decode().startswith("Name:"):
             project_name = line.decode().split(":")[1].strip()
             return project_name
+
+    raise NoProjectName(f"No project name found in {distribution_path}")
+
+
+def _get_project_name_from_git_config(distribution_path, f: "io.TextIOWrapper") -> str:
+    """Get the project name from a git config file
+
+    Args:
+        distribution_path: Path to the file containing package metadata
+        f: File handle
+
+    Returns:
+        Project name for the distribution as extracted from the remote url fragment
+
+    Raises:
+        :py:exc:`.NoProjectName` when no project name could be parsed from distribution
+            metadata
+
+    """
+
+    config = configparser.ConfigParser()
+    decoded = "".join([x.decode() for x in f.readlines()])
+
+    try:
+        config.read_string(decoded)
+    except Exception:
+        raise InvalidGitFile(f"Git config file {distribution_path} failed to parse")
+
+    sections = [remote for remote in config.sections() if re.match("remote ", remote)]
+
+    if len(sections) > 0:
+        url = config[sections[0]]["url"]
+        return os.path.basename(urlparse(url).path)
 
     raise NoProjectName(f"No project name found in {distribution_path}")
 
@@ -225,23 +249,30 @@ def _get_package_names_from_zip(distribution_path: str) -> Tuple[List[str], str]
     top_level_imports = None
     project_name = None
     for name in zf.namelist():
-        if os.path.basename(name) == "top_level.txt":
+        file_in_zip = os.path.basename(name)
+        if file_in_zip == "top_level.txt":
             with zf.open(name) as f:
                 top_level_imports = _parse_top_level_imports_from_file(
                     distribution_path, f
                 )
-        elif os.path.basename(name) == "PKG-INFO":
+        elif file_in_zip == "PKG-INFO":
             with zf.open(name) as f:
                 project_name = _get_project_name_from_metadata_file(
                     distribution_path, f
                 )
+        elif (
+            file_in_zip == "config"
+            and os.path.basename(os.path.dirname(name)) == ".git"
+        ):
+            with zf.open(name) as f:
+                project_name = _get_project_name_from_git_config(distribution_path, f)
 
         if top_level_imports is not None and project_name is not None:
             break
 
     if project_name is None:
         raise MissingDistributionMetadataFile(
-            f"Could not find PKG-INFO in {distribution_path}"
+            f"Could not find PKG-INFO or .git/config in {distribution_path}"
         )
     elif top_level_imports is None:
         top_level_imports = [project_name]
@@ -353,10 +384,13 @@ def update_third_party_import_map() -> None:
     logger.info("Updating third-party import map")
 
     with PROJECT_CONFIG.third_party_requirements_path.open() as f:
-        requirements = list(pkg_resources.parse_requirements(f.read()))
+        requirements = list(requirements_parser.parse(f.read()))
 
     existing_project_names = set(THIRD_PARTY_IMPORT_MAP.values())
-    current_project_names = set(req.project_name for req in requirements)
+    # regex source: https://github.com/pypa/setuptools/blob/37e1ca6d12420468a545acdd035050780b997d7f/pkg_resources/__init__.py#L1319
+    current_project_names = set(
+        re.sub("[^A-Za-z0-9.]+", "-", req.name) for req in requirements
+    )
 
     # New requirements for which we need to go resolve an import name
     new_project_names = current_project_names - existing_project_names
@@ -383,13 +417,20 @@ def update_third_party_import_map() -> None:
         del import_map[import_map_inverse[project_name]]
 
     new_requirement_specifiers = [
-        str(req) for req in requirements if req.project_name in new_project_names
+        str(req.line)
+        for req in requirements
+        if re.sub("[^A-Za-z0-9.]+", "-", req.name) in new_project_names
     ]
+
     import_map_exceptions = []
     if len(new_requirement_specifiers) > 0:
         import_map_exceptions, import_map_updates = _get_import_map_for_requirements(
             new_requirement_specifiers
         )
+        import pprint
+
+        pprint.pprint(import_map_updates)
+        exit()
         import_map.update(import_map_updates)
 
     with PROJECT_CONFIG.third_party_import_map_path.open("w") as f:

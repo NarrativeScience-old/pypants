@@ -16,6 +16,7 @@ requires = [
     "cookiecutter<2,>=1.6.0",
     "networkx<3,>=2.2",
     "python-slugify<2,>=1.2.0",
+    "requirements-parser==0.2.0"
 ]
 classifiers = [
     "Intended Audience :: Developers",

@@ -65,3 +65,9 @@ class NoTargetFound(Exception):
     """Raised when no target could be found in the registered graph of targets"""
 
     pass
+
+
+class InvalidGitFile(Exception):
+    """Raised when git config file could not be parsed"""
+
+    pass
