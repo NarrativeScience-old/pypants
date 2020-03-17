@@ -427,10 +427,6 @@ def update_third_party_import_map() -> None:
         import_map_exceptions, import_map_updates = _get_import_map_for_requirements(
             new_requirement_specifiers
         )
-        import pprint
-
-        pprint.pprint(import_map_updates)
-        exit()
         import_map.update(import_map_updates)
 
     with PROJECT_CONFIG.third_party_import_map_path.open("w") as f:
