@@ -27,7 +27,8 @@ jobs:
               --source "origin/${GITHUB_PR_BASE_BRANCH}" \
               --origin "origin/${CIRCLE_BRANCH}" \
               --show-diff-on-failure
-      - run: tox
+      # Reenable after tests exist
+      # - run: tox
       - run: flit build
       - ghpr/post-pr-comment:
           comment: Tests failed!
