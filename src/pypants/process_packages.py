@@ -28,6 +28,9 @@ from .util import gather_dependencies_from_module, write_build_file
 
 logger = logging.getLogger(__name__)
 
+# Number of workers to use for various multiprocessing pools
+PROCESSES = max(1, os.cpu_count() - 1)
+
 
 class PackageProcessor:
     """Class with methods for processing internal Python packages in order to:
@@ -74,9 +77,9 @@ class PackageProcessor:
                             )
 
         # Create a pool of workers that will parse imports from each Python module
-        # path. Default worker count equals the number of CPU cores.
+        # path.
         paths = [path for _, path in target_paths]
-        with Pool() as pool:
+        with Pool(processes=PROCESSES) as pool:
             # Return a list of sets containing imported package names
             imported_package_names_per_path = pool.map(
                 gather_dependencies_from_module, paths
@@ -108,8 +111,8 @@ class PackageProcessor:
                 trees_to_write.append((tree, target.build_file))
 
         # Create a pool of workers that will render, format, and write each AST module
-        # tree to disk. Default worker count equals the number of CPU cores.
-        with Pool() as pool:
+        # tree to disk.
+        with Pool(processes=PROCESSES) as pool:
             pool.starmap(write_build_file, trees_to_write)
 
     def generate_build_file(self, target_key: str) -> None:
