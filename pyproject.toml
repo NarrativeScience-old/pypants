@@ -13,7 +13,7 @@ requires = [
     "astor<1,>=0.7.1",
     "black==19.3b0",
     "Click>=7.0",
-    "cookiecutter=1.7.0",
+    "cookiecutter==1.7.0",
     "networkx<3,>=2.2",
     "python-slugify<2,>=1.2.0",
 ]
