@@ -31,6 +31,9 @@ logger = logging.getLogger(__name__)
 # Number of workers to use for various multiprocessing pools
 PROCESSES = max(1, os.cpu_count() - 1)
 
+# The directory within a py2sfn project in which to place the BUILD file.
+PY2SFN_BUILD_DIR = "BUILD"
+
 
 class PackageProcessor:
     """Class with methods for processing internal Python packages in order to:
@@ -260,7 +263,7 @@ class PackageProcessor:
                 package_dir_name=project_path.name,
                 package_path=str(project_path),
                 package_name=str(project_path),
-                build_dir=str(project_path),
+                build_dir=str(project_path.joinpath(PY2SFN_BUILD_DIR)),
             )
             if target.key in PROJECT_CONFIG.ignore_targets:
                 logger.debug(f"Ignoring {target}")
