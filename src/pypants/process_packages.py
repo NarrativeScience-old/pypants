@@ -32,7 +32,7 @@ logger = logging.getLogger(__name__)
 PROCESSES = max(1, os.cpu_count() - 1)
 
 # The directory within a py2sfn project in which to place the BUILD file.
-PY2SFN_BUILD_DIR = "BUILD"
+PY2SFN_BUILD_DIR = "build"
 
 
 class PackageProcessor:
