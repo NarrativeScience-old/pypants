@@ -161,7 +161,7 @@ python_library(
         "lib/code/src",
         "lib/logger/src",
     ],
-    sources=globs("my_library/**/*"),
+    sources=["my_library/**/*"],
     tags={"code", "lib", "python"},
 )
 ```
@@ -182,7 +182,7 @@ python_library(
         "3rdparty/python:jsonschema",
         "lib/logger/src",
     ],
-    sources=globs("cli_deploy/**/*"),
+    sources=["cli_deploy/**/*"],
     tags={"apps", "code", "python"},
 )
 python_binary(
@@ -210,12 +210,12 @@ python_library(
         "lib/python_core/src",
         "lib/time_utils/src"
     ],
-    sources=globs("**/*"),
+    sources=["**/*"],
     tags={"lib", "python", "tests", "unit"},
 )
 python_tests(
     dependencies=[":lib/time_utils/tests/unit"],
-    sources=globs("**/*.py"),
+    sources=["**/*.py"],
     tags={"lib", "python", "tests", "unit"},
 )
 python_binary(
@@ -236,7 +236,7 @@ The BUILD file for the Lambda handler contains a special-purpose build target: `
 ```python
 python_library(
     name="my-lambda-lib",
-    sources=globs("lambda_handler/**/*"),
+    sources=["lambda_handler/**/*"],
     dependencies=[
         "3rdparty/python:requests",
         "lib/logger/src",
@@ -268,7 +268,7 @@ python_library(
         "3rdparty/python:SQLAlchemy",
         "lib/core/src",
     ],
-    sources=globs("**/*"),
+    sources=["**/*"],
     tags={"code", "db", "migration", "python"},
 )
 python_binary(name="alembic", entry_point="alembic.config", dependencies=[":lib"])
@@ -277,9 +277,9 @@ python_app(
     archive="tar",
     binary=":alembic",
     bundles=[
-        bundle(fileset=globs("alembic.ini")),
-        bundle(fileset=globs("env.py")),
-        bundle(fileset=globs("versions/*.py")),
+        bundle(fileset=["alembic.ini"]),
+        bundle(fileset=["env.py"]),
+        bundle(fileset=["versions/*.py"]),
     ],
     tags={"code", "db", "migration", "python"},
 )
@@ -298,7 +298,7 @@ python_library(
         "3rdparty/python:requests",
         "lib/application_config/src",
     ],
-    sources=globs("**/*"),
+    sources=["**/*"],
     tags={"integration", "python", "tests", "tests-integration"},
 )
 python_binary(

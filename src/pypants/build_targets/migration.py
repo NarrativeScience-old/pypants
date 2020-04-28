@@ -12,14 +12,7 @@ class AlembicMigrationPackage(PythonPackage):
         return ast.Call(
             func=ast.Name(id="bundle"),
             args=[],
-            keywords=[
-                ast.keyword(
-                    arg="fileset",
-                    value=ast.Call(
-                        func=ast.Name(id="globs"), args=[ast.Str(glob)], keywords=[]
-                    ),
-                )
-            ],
+            keywords=[ast.keyword(arg="fileset", value=ast.List(elts=[ast.Str(glob)]))],
         )
 
     def _generate_migrations_python_app_ast_node(self) -> ast.Expr:

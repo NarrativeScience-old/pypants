@@ -204,12 +204,7 @@ class PythonPackage(BuildTarget):
             self._get_dependencies_keyword(
                 include_extra_dependencies=include_extra_dependencies
             ),
-            ast.keyword(
-                arg="sources",
-                value=ast.Call(
-                    func=ast.Name(id="globs"), args=[ast.Str(globs_path)], keywords=[]
-                ),
-            ),
+            ast.keyword(arg="sources", value=ast.List(elts=[ast.Str(globs_path)])),
             self._tags_keyword,
         ]
         if name is not None:
