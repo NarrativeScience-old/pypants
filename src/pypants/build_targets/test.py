@@ -24,12 +24,7 @@ class PythonTestPackage(PythonPackage):
                 arg="dependencies",
                 value=ast.List(elts=[ast.Str(f":{self.rendered_package_name}")]),
             ),
-            ast.keyword(
-                arg="sources",
-                value=ast.Call(
-                    func=ast.Name(id="globs"), args=[ast.Str("**/*.py")], keywords=[]
-                ),
-            ),
+            ast.keyword(arg="sources", value=ast.List(elts=[ast.Str("**/*.py")])),
             self._tags_keyword,
         ]
         if self.config.include_test_coverage:
