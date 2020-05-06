@@ -4,8 +4,8 @@ import importlib.util
 import logging
 from multiprocessing import Pool
 import os
-import re
 from pathlib import Path
+import re
 from typing import Dict, List, Tuple
 
 import networkx as nx
@@ -103,7 +103,7 @@ class PackageProcessor:
                 target.add_dependency(self._targets, package_name)
 
     def generate_build_files(self, target_pattern: str) -> None:
-        """Generate BUILD files. 
+        """Generate BUILD files.
 
         If target_pattern provided Build files are only generated for
         targets with keys matching the pattern
