@@ -4,6 +4,7 @@ import importlib.util
 import logging
 from multiprocessing import Pool
 import os
+import re
 from pathlib import Path
 from typing import Dict, List, Tuple
 
@@ -101,17 +102,20 @@ class PackageProcessor:
             for package_name in package_names:
                 target.add_dependency(self._targets, package_name)
 
-    def generate_build_files(self) -> None:
-        """Generate BUILD files.
+    def generate_build_files(self, target_pattern: str) -> None:
+        """Generate BUILD files. 
 
+        If target_pattern provided Build files are only generated for
+        targets with keys matching the pattern
         You must have already called :py:meth:`.register_packages`.
         """
         logger.info("Generating BUILD files")
         trees_to_write = []
-        for target in self._targets.values():
-            tree = target.generate_build_file()
-            if tree is not None:
-                trees_to_write.append((tree, target.build_file))
+        for key, target in self._targets.items():
+            if not target_pattern or re.search(target_pattern, key):
+                tree = target.generate_build_file()
+                if tree is not None:
+                    trees_to_write.append((tree, target.build_file))
 
         # Create a pool of workers that will render, format, and write each AST module
         # tree to disk.
