@@ -6,7 +6,7 @@ from multiprocessing import Pool
 import os
 from pathlib import Path
 import re
-from typing import Dict, List, Tuple
+from typing import Dict, List, Optional, Tuple
 
 import networkx as nx
 
@@ -106,11 +106,11 @@ class PackageProcessor:
         """Generate BUILD files.
 
         You must have already called :py:meth:`.register_packages`.
-        
+
         Args:
-            target_pattern: If provided, BUILD files are only generated for targets with 
+            target_pattern: If provided, BUILD files are only generated for targets with
                 keys matching the pattern
-                
+
         """
         logger.info("Generating BUILD files")
         trees_to_write = []
