@@ -102,12 +102,15 @@ class PackageProcessor:
             for package_name in package_names:
                 target.add_dependency(self._targets, package_name)
 
-    def generate_build_files(self, target_pattern: str) -> None:
+    def generate_build_files(self, target_pattern: Optional[str] = None) -> None:
         """Generate BUILD files.
 
-        If target_pattern provided Build files are only generated for
-        targets with keys matching the pattern
         You must have already called :py:meth:`.register_packages`.
+        
+        Args:
+            target_pattern: If provided, BUILD files are only generated for targets with 
+                keys matching the pattern
+                
         """
         logger.info("Generating BUILD files")
         trees_to_write = []
