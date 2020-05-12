@@ -20,6 +20,7 @@ Table of Contents:
   - [Package Types](#package-types)
   - [Registering Extra Targets](#registering-extra-targets)
   - [Package Generators](#package-generators)
+- [Development](#development)
 
 ## Installation
 
@@ -394,3 +395,11 @@ def register_extra_targets() -> Dict[str, "pypants.build_targets.base.PythonPack
 ### Package Generators
 
 The `generate-package` command can be used to create a new package on disk. It sources package "generators" (folders that define the package boilerplate) from the `.pypants/generators` folder in your repo. To create a new package generator, copy one of the folders from [`examples/generators/`](examples/generators/) to `<your repo>/.pypants/generators/<name>` and modify it as needed. The generators use a tool called [cookiecutter](https://github.com/cookiecutter/cookiecutter) to rendere templates.
+
+## Development
+
+If you're working on pypants locally and want to test out how your changes impact your target project:
+
+1. Activate the virtualenv for your target project
+1. Install flit: `pip install flit`
+1. Keeping your virtualenv activated, install pypants via `cd /path/to/pypants/repo && flit install -s`
