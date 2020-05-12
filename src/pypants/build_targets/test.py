@@ -34,7 +34,8 @@ class PythonTestPackage(PythonPackage):
                 code_target_package_names = {
                     d.package_name
                     for d in self.dependencies
-                    if not isinstance(d, PythonRequirement) and d.config.include_test_coverage
+                    if not isinstance(d, PythonRequirement)
+                    and d.config.include_test_coverage
                 }
                 # Build the coverage based on the dependency packages
                 elements = [ast.Str(pkg) for pkg in sorted(code_target_package_names)]
