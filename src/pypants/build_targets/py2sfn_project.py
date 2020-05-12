@@ -24,7 +24,7 @@ class PY2SFNProjectPackage(PythonPackage):
 
         """
         logger.debug(f"Gathering dependencies for {self.key}")
-        for task_package_path in Path(self.package_path).glob("tasks/*/src/*"):
+        for task_package_path in Path(self.build_dir).glob("tasks/*/src/*"):
             package_name = task_package_path.name
             if package_name in targets:
                 self.dependencies.add(targets[package_name])
