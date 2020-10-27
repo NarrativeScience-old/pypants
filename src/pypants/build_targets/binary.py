@@ -95,7 +95,7 @@ class PythonBinaryPackage(PythonPackage):
                     ast.keyword(
                         arg="dependencies", value=ast.List(elts=[ast.Str(":lib")])
                     ),
-                    ast.keyword(arg="source", value=ast.Str(source_module_path)),
+                    ast.keyword(arg="sources", value=ast.List(elts=[ast.Str(source_module_path)])),
                     self._tags_keyword,
                 ],
             )
