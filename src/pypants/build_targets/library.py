@@ -16,7 +16,7 @@ class PythonLibraryPackage(PythonPackage):
         node = ast.Module(
             body=[
                 self._generate_python_library_ast_node(
-                    globs_path=f"{self.package_name}/**/*"
+                    globs_path=f"{self.package_name}/**/*.py"
                 )
             ]
         )
