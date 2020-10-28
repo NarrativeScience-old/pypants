@@ -117,7 +117,7 @@ class PythonBinaryPackage(PythonPackage):
                         ),
                     ),
                     ast.keyword(
-                        arg="source", value=ast.Str(f"{self.package_name}/local.py")
+                        arg="sources", value=ast.List(elts=[ast.Str(f"{self.package_name}/local.py")])
                     ),
                     self._tags_keyword,
                 ],
