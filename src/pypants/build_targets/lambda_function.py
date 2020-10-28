@@ -36,7 +36,13 @@ class PythonLambdaPackage(PythonBinaryPackage):
                         arg="dependencies", value=ast.List(elts=[ast.Str(":lib")])
                     ),
                     ast.keyword(
-                        arg="source",
+                        arg="sources",
+                        value=ast.List(
+                            elts=[ast.Str(f"{self.package_name}/lambda_handler.py")]
+                        ),
+                    ),
+                    ast.keyword(
+                        arg="entry_point",
                         value=ast.Str(f"{self.package_name}/lambda_handler.py"),
                     ),
                     self._tags_keyword,
@@ -54,13 +60,16 @@ class PythonLambdaPackage(PythonBinaryPackage):
                 args=[],
                 keywords=[
                     ast.keyword(arg="name", value=ast.Str(binary_name)),
-                    ast.keyword(arg="binary", value=ast.Str(":bin")),
+                    ast.keyword(
+                        arg="dependencies", value=ast.List(elts=[ast.Str(":bin")])
+                    ),
                     ast.keyword(
                         arg="handler",
                         value=ast.Str(
                             f"{self.package_name}.lambda_handler:lambda_handler"
                         ),
                     ),
+                    ast.keyword(arg="runtime", value=ast.Str("python3.6")),
                     self._tags_keyword,
                 ],
             )
