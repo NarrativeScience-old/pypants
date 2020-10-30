@@ -69,7 +69,9 @@ class PythonLambdaPackage(PythonBinaryPackage):
                             f"{self.package_name}.lambda_handler:lambda_handler"
                         ),
                     ),
-                    ast.keyword(arg="runtime", value=ast.Str("python3.6")),
+                    ast.keyword(
+                        arg="runtime", value=ast.Str(self.config.default_python_runtime)
+                    ),
                     self._tags_keyword,
                 ],
             )

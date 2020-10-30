@@ -21,6 +21,7 @@ class Config:
         third_party_import_map_path = "3rdparty/python/import-map.json"
         third_party_requirements_path = "3rdparty/python/requirements.txt"
         top_dirs = ["."]
+        default_python_runtime = "python3.6"|"python3.7"|...
 
     The schema for the file in an individual python package is::
 
@@ -150,6 +151,13 @@ class Config:
         Returning none means we should use a heuristic to figure out the type.
         """
         return self._config.get("package", "type", fallback=None)
+
+    @property
+    def default_python_runtime(self) -> Optional[str]:
+        """Default python runtime"""
+        return self._config.get(
+            "package", "default_python_runtime", fallback="python3.6"
+        )
 
 
 # Create a singleton for the project configuration
