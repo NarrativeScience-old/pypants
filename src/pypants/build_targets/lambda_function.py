@@ -82,7 +82,7 @@ class PythonLambdaPackage(PythonBinaryPackage):
         """Generate a Pants BUILD file as an AST module node"""
         body = [
             self._generate_python_library_ast_node(
-                name="lib", globs_path=f"{self.package_name}/**/*"
+                name="lib", globs_path=f"{self.package_name}/**/*.py"
             ),
             self._generate_python_binary_cli_ast_node(),
             self._generate_python_lambda_ast_node(),
