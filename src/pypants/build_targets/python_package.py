@@ -184,7 +184,7 @@ class PythonPackage(BuildTarget):
     def _generate_python_library_ast_node(
         self,
         name: Optional[str] = None,
-        globs_path: str = "**/*",
+        globs_path: str = "**/*.py",
         include_extra_dependencies: bool = True,
     ) -> ast.Expr:
         """Generate an AST node for a python_library Pants target
