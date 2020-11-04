@@ -139,5 +139,7 @@ class PythonBinaryPackage(PythonPackage):
         ]
         if self.config.generate_local_binary:
             body.append(self._generate_python_binary_local_ast_node())
+        if self.config.resource_glob_path:
+            body.append(self._generate_python_library_resources_ast_node())
         node = ast.Module(body=body)
         return node
