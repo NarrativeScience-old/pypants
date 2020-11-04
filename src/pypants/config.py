@@ -159,6 +159,11 @@ class Config:
             "package", "default_python_runtime", fallback="python3.6"
         )
 
+    @property
+    def resource_glob_path(self) -> Optional[str]:
+        """Resource glob path if needed in a package"""
+        return self._config.get("package", "resource_glob_path", fallback=None)
+
 
 # Create a singleton for the project configuration
 PROJECT_CONFIG = Config(get_git_top_level_path())

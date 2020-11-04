@@ -181,6 +181,33 @@ class PythonPackage(BuildTarget):
             arg="tags", value=ast.Set(elts=[ast.Str(t) for t in sorted(self.tags)])
         )
 
+    def _generate_python_library_resources_ast_node(self, globs_path: str = "**/*"):
+        """Generate an AST node for a python resource target
+
+        Args:
+            globs_path: The path to look for resources at
+
+        Returns:
+            AST expression node
+
+        """
+        keywords = [ast.keyword(arg="name", value=ast.Str("resources"))]
+        # gather the globs if present in the config, otherwise the sources are default
+        if self.config.resource_glob_path:
+            sources = []
+            for path in self.config.resource_glob_path.split(" "):
+                sources.append(ast.Str(path))
+            keywords.append(ast.keyword(arg="sources", value=ast.List(elts=sources)))
+        else:
+            keywords.append(
+                ast.keyword(arg="sources", value=ast.List(elts=[ast.Str(globs_path)]))
+            )
+        # create our node of resources
+        node = ast.Expr(
+            value=ast.Call(func=ast.Name(id="resources"), args=[], keywords=keywords)
+        )
+        return node
+
     def _generate_python_library_ast_node(
         self,
         name: Optional[str] = None,
