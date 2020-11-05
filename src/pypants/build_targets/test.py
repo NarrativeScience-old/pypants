@@ -51,7 +51,7 @@ class PythonTestPackage(PythonPackage):
         """Generate a Pants BUILD file as an AST module node"""
         body = [
             self._generate_python_library_ast_node(
-                name=self.rendered_package_name, include_extra_dependencies=False
+                name=self.rendered_package_name, include_extra_dependencies=True
             ),
             self._generate_python_tests_ast_node(),
             self._generate_python_binary_wrapper_node(
@@ -64,5 +64,7 @@ class PythonTestPackage(PythonPackage):
                     "pytest", dependencies=[f":{self.rendered_package_name}"]
                 )
             )
+        if self.config.resource_glob_path:
+            body.append(self._generate_python_library_resources_ast_node())
         node = ast.Module(body=body)
         return node
