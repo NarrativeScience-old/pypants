@@ -95,7 +95,10 @@ class PythonBinaryPackage(PythonPackage):
                     ast.keyword(
                         arg="dependencies", value=ast.List(elts=[ast.Str(":lib")])
                     ),
-                    ast.keyword(arg="source", value=ast.Str(source_module_path)),
+                    ast.keyword(
+                        arg="sources",
+                        value=ast.List(elts=[ast.Str(source_module_path)]),
+                    ),
                     self._tags_keyword,
                 ],
             )
@@ -117,7 +120,8 @@ class PythonBinaryPackage(PythonPackage):
                         ),
                     ),
                     ast.keyword(
-                        arg="source", value=ast.Str(f"{self.package_name}/local.py")
+                        arg="sources",
+                        value=ast.List(elts=[ast.Str(f"{self.package_name}/local.py")]),
                     ),
                     self._tags_keyword,
                 ],
@@ -129,11 +133,13 @@ class PythonBinaryPackage(PythonPackage):
         """Generate a Pants BUILD file as an AST module node"""
         body = [
             self._generate_python_library_ast_node(
-                name="lib", globs_path=f"{self.package_name}/**/*"
+                name="lib", globs_path=f"{self.package_name}/**/*.py"
             ),
             self._generate_python_binary_cli_ast_node(),
         ]
         if self.config.generate_local_binary:
             body.append(self._generate_python_binary_local_ast_node())
+        if self.config.resource_glob_path:
+            body.append(self._generate_python_library_resources_ast_node())
         node = ast.Module(body=body)
         return node

@@ -14,7 +14,9 @@ class PythonBehaveTestPackage(PythonTestPackage):
                 func=ast.Name(id="python_binary"),
                 args=[],
                 keywords=[
-                    ast.keyword(arg="source", value=ast.Str("behave_cli.py")),
+                    ast.keyword(
+                        arg="sources", value=ast.List(elts=[ast.Str("behave_cli.py")])
+                    ),
                     ast.keyword(
                         arg="dependencies", value=ast.List(elts=[ast.Str(":lib")])
                     ),
@@ -30,6 +32,7 @@ class PythonBehaveTestPackage(PythonTestPackage):
             body=[
                 self._generate_python_library_ast_node(name="lib"),
                 self._generate_python_binary_behave_wrapper_node(),
+                self._generate_python_library_resources_ast_node(),
             ]
         )
         return node

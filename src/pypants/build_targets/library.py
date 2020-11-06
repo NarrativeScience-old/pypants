@@ -13,11 +13,15 @@ class PythonLibraryPackage(PythonPackage):
 
     def generate_build_file_ast_node(self) -> ast.Module:
         """Generate a Pants BUILD file as an AST module node"""
-        node = ast.Module(
-            body=[
-                self._generate_python_library_ast_node(
-                    globs_path=f"{self.package_name}/**/*"
-                )
-            ]
+        body = []
+        # check if we have a resource target
+        if self.config.resource_glob_path:
+            body.append(self._generate_python_library_resources_ast_node())
+        # Add in the lib
+        body.append(
+            self._generate_python_library_ast_node(
+                globs_path=f"{self.package_name}/**/*.py"
+            )
         )
+        node = ast.Module(body=body)
         return node
