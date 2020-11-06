@@ -153,7 +153,7 @@ class Config:
         return self._config.get("package", "type", fallback=None)
 
     @property
-    def default_python_runtime(self) -> Optional[str]:
+    def default_python_runtime(self) -> str:
         """Default python runtime"""
         return self._config.get(
             "package", "default_python_runtime", fallback="python3.6"
