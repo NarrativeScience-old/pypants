@@ -99,7 +99,9 @@ class PythonBinaryPackage(PythonPackage):
                         arg="sources",
                         value=ast.List(elts=[ast.Str(source_module_path)]),
                     ),
-                    ast.keyword(arg="zip_safe", value=ast.NameConstant(self.config.zip_safe)),
+                    ast.keyword(
+                        arg="zip_safe", value=ast.NameConstant(self.config.zip_safe)
+                    ),
                     self._tags_keyword,
                 ],
             )

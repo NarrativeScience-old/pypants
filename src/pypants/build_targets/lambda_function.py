@@ -45,7 +45,9 @@ class PythonLambdaPackage(PythonBinaryPackage):
                         arg="entry_point",
                         value=ast.Str(f"{self.package_name}/lambda_handler.py"),
                     ),
-                    ast.keyword(arg="zip_safe", value=ast.NameConstant(self.config.zip_safe)),
+                    ast.keyword(
+                        arg="zip_safe", value=ast.NameConstant(self.config.zip_safe)
+                    ),
                     self._tags_keyword,
                 ],
             )
