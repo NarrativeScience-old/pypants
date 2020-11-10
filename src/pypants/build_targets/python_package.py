@@ -277,6 +277,9 @@ class PythonPackage(BuildTarget):
                         arg="dependencies",
                         value=ast.List(elts=[ast.Str(d) for d in dependencies]),
                     ),
+                    ast.keyword(
+                        arg="zip_safe", value=ast.NameConstant(self.config.zip_safe)
+                    ),
                 ],
             )
         )
