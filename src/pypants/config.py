@@ -167,7 +167,7 @@ class Config:
     @property
     def zip_safe(self) -> bool:
         """Default options for zip safe in pants binary targets"""
-        return self._config.get("package", "zip_safe", fallback=False)
+        return self._config.getboolean("package", "zip_safe", fallback=False)
 
 
 # Create a singleton for the project configuration
