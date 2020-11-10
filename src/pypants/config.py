@@ -164,6 +164,11 @@ class Config:
         """Resource glob path if needed in a package"""
         return self._config.get("package", "resource_glob_path", fallback=None)
 
+    @property
+    def zip_safe(self) -> bool:
+        """Default options for zip safe in pants binary targets"""
+        return self._config.get("package", "zip_safe", fallback=False)
+
 
 # Create a singleton for the project configuration
 PROJECT_CONFIG = Config(get_git_top_level_path())
