@@ -142,8 +142,6 @@ type = library
 ; Flag denoting whether to include a pex_binary target for pytest
 ; generate_pytest_binary = false
 
-; Flag denoting whether to include a coverage attribute on pytest targets
-; include_test_coverage = true
 ```
 
 ### Package Types
