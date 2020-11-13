@@ -54,13 +54,13 @@ class PythonTestPackage(PythonPackage):
                 name=self.rendered_package_name, include_extra_dependencies=True
             ),
             self._generate_python_tests_ast_node(),
-            self._generate_python_binary_wrapper_node(
+            self._generate_pex_binary_wrapper_node(
                 "unittest", dependencies=[f":{self.rendered_package_name}"]
             ),
         ]
         if self.config.generate_pytest_binary:
             body.append(
-                self._generate_python_binary_wrapper_node(
+                self._generate_pex_binary_wrapper_node(
                     "pytest", dependencies=[f":{self.rendered_package_name}"]
                 )
             )
