@@ -1,7 +1,7 @@
 version: 2.1
 
 orbs:
-  ghpr: narrativescience/ghpr@0.0.5
+  ghpr: narrativescience/ghpr@1.1.1
 
 commands:
   install-deps:
