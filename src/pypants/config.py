@@ -125,14 +125,14 @@ class Config:
 
     @property
     def generate_local_binary(self) -> bool:
-        """Flag denoting whether to generate a python_binary target for local.py"""
+        """Flag denoting whether to generate a pex_binary target for local.py"""
         return self._config.getboolean(
             "package", "generate_local_binary", fallback=False
         )
 
     @property
     def generate_pytest_binary(self) -> bool:
-        """Flag denoting whether to include a python_binary target for pytest"""
+        """Flag denoting whether to include a pex_binary target for pytest"""
         return self._config.getboolean(
             "package", "generate_pytest_binary", fallback=False
         )

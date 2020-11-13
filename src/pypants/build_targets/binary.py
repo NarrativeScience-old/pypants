@@ -83,12 +83,12 @@ class PythonBinaryPackage(PythonPackage):
         )
         return binary_name, source_module_path
 
-    def _generate_python_binary_cli_ast_node(self) -> ast.Expr:
-        """Generate an AST node for a python_binary Pants target"""
+    def _generate_pex_binary_cli_ast_node(self) -> ast.Expr:
+        """Generate an AST node for a pex_binary Pants target"""
         binary_name, source_module_path = self._parse_entry_point()
         node = ast.Expr(
             value=ast.Call(
-                func=ast.Name(id="python_binary"),
+                func=ast.Name(id="pex_binary"),
                 args=[],
                 keywords=[
                     ast.keyword(arg="name", value=ast.Str(binary_name)),
@@ -108,11 +108,11 @@ class PythonBinaryPackage(PythonPackage):
         )
         return node
 
-    def _generate_python_binary_local_ast_node(self) -> ast.Expr:
-        """Generate an AST node for a python_binary Pants target that runs local.py"""
+    def _generate_pex_binary_local_ast_node(self) -> ast.Expr:
+        """Generate an AST node for a pex_binary Pants target that runs local.py"""
         node = ast.Expr(
             value=ast.Call(
-                func=ast.Name(id="python_binary"),
+                func=ast.Name(id="pex_binary"),
                 args=[],
                 keywords=[
                     ast.keyword(arg="name", value=ast.Str("local")),
@@ -138,10 +138,10 @@ class PythonBinaryPackage(PythonPackage):
             self._generate_python_library_ast_node(
                 name="lib", globs_path=f"{self.package_name}/**/*.py"
             ),
-            self._generate_python_binary_cli_ast_node(),
+            self._generate_pex_binary_cli_ast_node(),
         ]
         if self.config.generate_local_binary:
-            body.append(self._generate_python_binary_local_ast_node())
+            body.append(self._generate_pex_binary_local_ast_node())
         if self.config.resource_glob_path:
             body.append(self._generate_python_library_resources_ast_node())
         node = ast.Module(body=body)
