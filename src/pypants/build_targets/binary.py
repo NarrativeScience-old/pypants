@@ -115,7 +115,10 @@ class PythonBinaryPackage(PythonPackage):
                 func=ast.Name(id="pex_binary"),
                 args=[],
                 keywords=[
-                    ast.keyword(arg="name", value=ast.Str("local")),
+                    ast.keyword(
+                        arg="name",
+                        value=ast.Str(f"local-{self.package_name.rsplit('_', 1)[1]}"),
+                    ),
                     ast.keyword(
                         arg="dependencies",
                         value=ast.List(
