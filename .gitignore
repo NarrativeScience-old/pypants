@@ -4,8 +4,7 @@
 **/__pycache__/
 **/.cache/
 **/.tox
-**/*.
-coverage
+**/*.coverage
 **/*.egg-info
 **/*.pyc
 **/dist
