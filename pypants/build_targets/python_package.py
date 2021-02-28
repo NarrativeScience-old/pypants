@@ -33,6 +33,7 @@ class PythonPackage(BuildTarget):
         rendered_package_name: Optional[str] = None,
         extra_tags: Optional[Set] = None,
         config: Optional[Config] = None,
+        build_file_extension: str = "",
     ) -> None:
         """
         Args:
@@ -52,6 +53,7 @@ class PythonPackage(BuildTarget):
                 the standard set
             config: Configuration for this package, potentially loaded from a
                 .pypants.cfg file. If not provided it will be loaded.
+            build_file_extension: Extension to add to the BUILD file name
 
         """
         self.target_type = target_type
@@ -62,7 +64,7 @@ class PythonPackage(BuildTarget):
             self.top_dir_name, self.package_dir_name
         )
         self.build_dir = build_dir
-        self.build_file = os.path.join(self.build_dir, "BUILD")
+        self.build_file = os.path.join(self.build_dir, f"BUILD{build_file_extension}")
         self.package_path = package_path
         self.package_name = package_name
         self.rendered_package_name = (

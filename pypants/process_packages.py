@@ -32,9 +32,6 @@ logger = logging.getLogger(__name__)
 # Number of workers to use for various multiprocessing pools
 PROCESSES = max(1, os.cpu_count() - 1)
 
-# The directory within a py2sfn project in which to place the BUILD file.
-PY2SFN_BUILD_DIR = "build"
-
 
 class PackageProcessor:
     """Class with methods for processing internal Python packages in order to:
@@ -49,6 +46,18 @@ class PackageProcessor:
         self._targets: Dict[str, PythonPackage] = {}
         # Graph of targets
         self._target_graph: nx.DiGraph = None
+
+    def get_target(self, target_key: str) -> PythonPackage:
+        """Get a registered target by key
+
+        Args:
+            target_key: Key under which the target was registered
+
+        Returns:
+            target/package object
+
+        """
+        return self._targets[target_key]
 
     def register_packages(self) -> None:
         """Register targets and their dependencies.
@@ -261,8 +270,9 @@ class PackageProcessor:
         consists of a generic ``target`` that only serves to point to the underlying
         tasks.
         """
-        project_paths = Path("stepfunctions/projects").glob("*")
-        for project_path in project_paths:
+        project_paths = Path("stepfunctions/projects").glob("*/project.sfn")
+        for project_sfn in project_paths:
+            project_path = project_sfn.parent
             target = PY2SFNProjectPackage(
                 target_type="py2sfn-project",
                 build_template="py2sfn-project",
@@ -270,7 +280,8 @@ class PackageProcessor:
                 package_dir_name=project_path.name,
                 package_path=str(project_path),
                 package_name=str(project_path),
-                build_dir=str(project_path.joinpath(PY2SFN_BUILD_DIR)),
+                build_dir=str(project_path),
+                build_file_extension=".sfn",
             )
             if target.key in PROJECT_CONFIG.ignore_targets:
                 logger.debug(f"Ignoring {target}")
