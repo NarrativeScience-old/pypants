@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pypants"
-version = "1.1.0.dev9"
+version = "1.1.0"
 description = "CLI for working with Python packages and BUILD files in a Pants monorepo"
 authors = ["Jonathan Drake <jdrake@narrativescience.com>"]
 license = "BSD-3-Clause"
