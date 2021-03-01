@@ -3,33 +3,27 @@ version: 2.1
 orbs:
   ghpr: narrativescience/ghpr@0.0.5
 
-commands:
-  install-deps:
-    description: Install dependencies and initialize pre-commit hooks
-    steps:
-      - run:
-          command: |
-            pip install pre-commit tox flit
-            pre-commit install
-          name: Install dependencies
-
 jobs:
   test:
     docker:
       - image: circleci/python:3.6
     steps:
       - ghpr/build-prospective-branch
-      - install-deps
+      - run:
+          name: Install dependencies
+          command: |
+            pip install poetry
+            poetry install
+            poetry run pre-commit install
       - run:
           name: Run commit hooks
           command: |
-            pre-commit run \
+            poetry run pre-commit run \
               --source "origin/${GITHUB_PR_BASE_BRANCH}" \
               --origin "origin/${CIRCLE_BRANCH}" \
               --show-diff-on-failure
-      # Reenable after tests exist
-      # - run: tox
-      - run: flit build
+      - run: poetry build
+      # - run: poetry run pytest
       - ghpr/post-pr-comment:
           comment: Tests failed!
           when: on_fail
@@ -38,9 +32,10 @@ jobs:
       - image: circleci/python:3.6
     steps:
       - checkout
-      - run: pip install flit
-      - run: flit build
-      - run: flit publish
+      - run: pip install poetry
+      - run: poetry install
+      - run: poetry build
+      - run: poetry publish
 
 workflows:
   pull_request:

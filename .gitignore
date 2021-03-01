@@ -8,6 +8,7 @@
 **/*.egg-info
 **/*.pyc
 **/dist
+.pytest_cache
 
 # IDE files
 .idea

@@ -76,18 +76,9 @@ class PackageProcessor:
         logger.info("Gathering dependencies")
 
         # Collect a list of (build target, Python module) pairs from *all* the targets
-        target_paths = []
+        target_paths: List[Tuple[PythonPackage, str]] = []
         for target in self._targets.values():
-            for dirpath, dirnames, filenames in os.walk(target.package_path):
-                if os.path.basename(dirpath) in PROJECT_CONFIG.ignore_dirs:
-                    # Empty the list of directories so os.walk does not recur
-                    dirnames.clear()
-                else:
-                    for filename in filenames:
-                        if filename.endswith(".py"):
-                            target_paths.append(
-                                (target, os.path.join(dirpath, filename))
-                            )
+            target_paths.extend(target.find_target_paths())
 
         # Create a pool of workers that will parse imports from each Python module
         # path.
@@ -98,11 +89,6 @@ class PackageProcessor:
                 gather_dependencies_from_module, paths
             )
 
-        # Allow each target to set depencies in one batch. For most targets this will
-        # be a no-op.
-        for target in self._targets.values():
-            target.set_dependencies(self._targets)
-
         # For each target path / package name pair, process and add the dependency to
         # the target's set of dependencies.
         for (target, _), package_names in zip(
@@ -110,6 +96,11 @@ class PackageProcessor:
         ):
             for package_name in package_names:
                 target.add_dependency(self._targets, package_name)
+
+        # Allow each target to set extra dependencies based on their own custom logic.
+        # For most targets this will be a no-op.
+        for target in self._targets.values():
+            target.set_extra_dependencies(self._targets)
 
     def generate_build_files(self, target_pattern: Optional[str] = None) -> None:
         """Generate BUILD files.
@@ -281,7 +272,6 @@ class PackageProcessor:
                 package_path=str(project_path),
                 package_name=str(project_path),
                 build_dir=str(project_path),
-                build_file_extension=".sfn",
             )
             if target.key in PROJECT_CONFIG.ignore_targets:
                 logger.debug(f"Ignoring {target}")

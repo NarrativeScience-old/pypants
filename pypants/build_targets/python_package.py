@@ -3,7 +3,7 @@ import ast
 import logging
 import os
 import re
-from typing import Dict, List, Optional, Set
+from typing import Dict, List, Optional, Set, Tuple
 
 import astor
 
@@ -33,7 +33,6 @@ class PythonPackage(BuildTarget):
         rendered_package_name: Optional[str] = None,
         extra_tags: Optional[Set] = None,
         config: Optional[Config] = None,
-        build_file_extension: str = "",
     ) -> None:
         """
         Args:
@@ -53,7 +52,6 @@ class PythonPackage(BuildTarget):
                 the standard set
             config: Configuration for this package, potentially loaded from a
                 .pypants.cfg file. If not provided it will be loaded.
-            build_file_extension: Extension to add to the BUILD file name
 
         """
         self.target_type = target_type
@@ -64,7 +62,7 @@ class PythonPackage(BuildTarget):
             self.top_dir_name, self.package_dir_name
         )
         self.build_dir = build_dir
-        self.build_file = os.path.join(self.build_dir, f"BUILD{build_file_extension}")
+        self.build_file = os.path.join(self.build_dir, "BUILD")
         self.package_path = package_path
         self.package_name = package_name
         self.rendered_package_name = (
@@ -87,18 +85,44 @@ class PythonPackage(BuildTarget):
         tags.update(self.config.extra_tags)
         self.tags = tags
 
-    def set_dependencies(self, targets: Dict[str, BuildTarget]) -> None:
-        """Compute and set the collection of dependencies as a batch.
+    def find_target_paths(self) -> List[Tuple["PythonPackage", str]]:
+        """Find a list of target paths for parsing dependencies
 
-        This implementation just reinitializes the dependencies attribute. A
-        child class may choose to implement this method and skip the ``add_dependency``
-        method.
+        This default implementation collects all the .py files. Subclasses may override
+        this method to collect different file types.
+
+        Returns:
+            list of tuples with items:
+            * the current target (to indicate the owner)
+            * the path to the file that will be parsed
+
+        """
+        target_paths = []
+        for dirpath, dirnames, filenames in os.walk(self.package_path):
+            if os.path.basename(dirpath) in PROJECT_CONFIG.ignore_dirs:
+                # Empty the list of directories so os.walk does not recur
+                dirnames.clear()
+            else:
+                for filename in filenames:
+                    if filename.endswith(".py"):
+                        target_paths.append((self, os.path.join(dirpath, filename)))
+
+        return target_paths
+
+    def set_extra_dependencies(self, targets: Dict[str, BuildTarget]) -> None:
+        """Set extra dependencies on the target
+
+        This method allows targets to add dependencies based on their own custom logic.
+        By default this is a no-op.
+
+        A standard thing to do would be to call
+        ``self.add_dependency(targets, package_name)`` one or more times.
 
         Args:
             targets: map of package name to instance of BuildTarget
 
         """
-        self.dependencies = set()
+        pass
 
     def add_dependency(
         self, targets: Dict[str, BuildTarget], package_name: str

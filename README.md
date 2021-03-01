@@ -400,6 +400,7 @@ The `generate-package` command can be used to create a new package on disk. It s
 
 If you're working on pypants locally and want to test out how your changes impact your target project:
 
-1. Activate the virtualenv for your target project
-1. Install flit: `pip install flit`
-1. Keeping your virtualenv activated, install pypants via `cd /path/to/pypants/repo && flit install -s`
+1. Install poetry: `pip install poetry`
+2. Install dependencies: `poetry install`
+3. Activate the virtualenv: `poetry shell`
+4. Run `pytest` then `poetry build`
