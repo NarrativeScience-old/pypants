@@ -243,15 +243,15 @@ class PythonPackage(BuildTarget):
         )
         return node
 
-    def _generate_pex_binary_wrapper_node(
+    def _generate_python_binary_wrapper_node(
         self,
         name: str,
         entry_point: Optional[str] = None,
         dependencies: Optional[List[str]] = None,
     ) -> ast.Expr:
-        """Generate an AST node for a pex_binary Pants target with an entry point
+        """Generate an AST node for a python_binary Pants target with an entry point
 
-        See: https://www.pantsbuild.org/python_readme.html#pex_binary-entry_point
+        See: https://www.pantsbuild.org/python_readme.html#python_binary-entry_point
 
         Args:
             name: Name of the binary, e.g. unittest
@@ -268,7 +268,7 @@ class PythonPackage(BuildTarget):
 
         node = ast.Expr(
             value=ast.Call(
-                func=ast.Name(id="pex_binary"),
+                func=ast.Name(id="python_binary"),
                 args=[],
                 keywords=[
                     ast.keyword(arg="name", value=ast.Str(name)),
