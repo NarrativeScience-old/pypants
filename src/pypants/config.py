@@ -31,6 +31,7 @@ class Config:
         generate_build_file = <bool>
         generate_local_binary = <bool>
         generate_pytest_binary = <bool>
+        include_test_coverage = <bool>
         type = "library"|"binary"|...
 
     Instantiating this class will load and initialize a config parser instance.
@@ -124,16 +125,23 @@ class Config:
 
     @property
     def generate_local_binary(self) -> bool:
-        """Flag denoting whether to generate a pex_binary target for local.py"""
+        """Flag denoting whether to generate a python_binary target for local.py"""
         return self._config.getboolean(
             "package", "generate_local_binary", fallback=False
         )
 
     @property
     def generate_pytest_binary(self) -> bool:
-        """Flag denoting whether to include a pex_binary target for pytest"""
+        """Flag denoting whether to include a python_binary target for pytest"""
         return self._config.getboolean(
             "package", "generate_pytest_binary", fallback=False
+        )
+
+    @property
+    def include_test_coverage(self) -> bool:
+        """Flag denoting whether to include a coverage attribute on pytest targets"""
+        return self._config.getboolean(
+            "package", "include_test_coverage", fallback=True
         )
 
     @property

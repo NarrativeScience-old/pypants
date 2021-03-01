@@ -135,13 +135,15 @@ type = library
 ; Flag denoting whether to generate a BUILD file.
 ; generate_build_file = true
 
-; Flag denoting whether to generate a pex_binary target for local.py. This is
+; Flag denoting whether to generate a python_binary target for local.py. This is
 ; essentially an extra entry point. It's only used for specific package types.
 ; generate_local_binary = false
 
-; Flag denoting whether to include a pex_binary target for pytest
+; Flag denoting whether to include a python_binary target for pytest
 ; generate_pytest_binary = false
 
+; Flag denoting whether to include a coverage attribute on pytest targets
+; include_test_coverage = true
 ```
 
 ### Package Types
@@ -184,7 +186,7 @@ python_library(
     sources=["cli_deploy/**/*"],
     tags={"apps", "code", "python"},
 )
-pex_binary(
+python_binary(
     name="deploy",
     dependencies=[":lib"],
     source="cli_deploy/cli.py",
@@ -193,7 +195,7 @@ pex_binary(
 ```
 
 - The `python_library` target is pretty much the same as an internal Python library package
-- The `pex_binary` target defines an explicit name. This is because when we go to build the PEX file, we want to define the filename. In this example, running `./pants binary apps/cli_deploy/src:deploy` will result in `dist/deploy.pex`.
+- The `python_binary` target defines an explicit name. This is because when we go to build the PEX file, we want to define the filename. In this example, running `./pants binary apps/cli_deploy/src:deploy` will result in `dist/deploy.pex`.
 - The only dependency for the binary should be the library. The library will then include all the dependencies.
 - `source` points to the entry point of the binary. This module should handle the `if __name__ == "__main__"` condition to kick off the script.
 
@@ -217,7 +219,7 @@ python_tests(
     sources=["**/*.py"],
     tags={"lib", "python", "tests", "unit"},
 )
-pex_binary(
+python_binary(
     name="unittest",
     entry_point="unittest",
     dependencies=[":lib/time_utils/tests/unit"]
@@ -226,11 +228,11 @@ pex_binary(
 
 - The `python_library` target is mostly here to define the unit tests dependencies in a single place so the other two targets can point to it
 - The `python_tests` target lets us run pytest against the test files that match `**/*.py`
-- The `pex_binary` target lets us run the unittest module directly. We won't actually package up this target via `./pants binary`. Setting the entry_point to `"unittest"` is essentially the same as running `python -m unittest test_something.py` from the command line.
+- The `python_binary` target lets us run the unittest module directly. We won't actually package up this target via `./pants binary`. Setting the entry_point to `"unittest"` is essentially the same as running `python -m unittest test_something.py` from the command line.
 
 #### `lambda_function`
 
-The BUILD file for the Lambda handler contains a special-purpose build target: `python_awslambda`. This target is a wrapper around [lambdex](https://github.com/wickman/lambdex). It creates a PEX like the `pex_binary` target (you can execute it) but it modifies the PEX to work with a Lambda Function. For example:
+The BUILD file for the Lambda handler contains a special-purpose build target: `python_awslambda`. This target is a wrapper around [lambdex](https://github.com/wickman/lambdex). It creates a PEX like the `python_binary` target (you can execute it) but it modifies the PEX to work with a Lambda Function. For example:
 
 ```python
 python_library(
@@ -241,7 +243,7 @@ python_library(
         "lib/logger/src",
     ],
 )
-pex_binary(
+python_binary(
     name="my-lambda-bin",
     source="lambda_handler/lambda_handler.py",
     dependencies=[":my-lambda-lib"],
@@ -270,7 +272,7 @@ python_library(
     sources=["**/*"],
     tags={"code", "db", "migration", "python"},
 )
-pex_binary(name="alembic", entry_point="alembic.config", dependencies=[":lib"])
+python_binary(name="alembic", entry_point="alembic.config", dependencies=[":lib"])
 python_app(
     name="migrations-my-database-name",
     archive="tar",
@@ -300,7 +302,7 @@ python_library(
     sources=["**/*"],
     tags={"integration", "python", "tests", "tests-integration"},
 )
-pex_binary(
+python_binary(
     source="behave_cli.py",
     dependencies=[":lib"],
     tags={"integration", "python", "tests", "tests-integration"},
