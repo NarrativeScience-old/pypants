@@ -7,11 +7,11 @@ from .test import PythonTestPackage
 class PythonBehaveTestPackage(PythonTestPackage):
     """Represents a Python test package build target in Pants that uses behave"""
 
-    def _generate_pex_binary_behave_wrapper_node(self) -> ast.Expr:
-        """Generate an AST node for a pex_binary Pants target that wraps behave"""
+    def _generate_python_binary_behave_wrapper_node(self) -> ast.Expr:
+        """Generate an AST node for a python_binary Pants target that wraps behave"""
         node = ast.Expr(
             value=ast.Call(
-                func=ast.Name(id="pex_binary"),
+                func=ast.Name(id="python_binary"),
                 args=[],
                 keywords=[
                     ast.keyword(
@@ -31,7 +31,7 @@ class PythonBehaveTestPackage(PythonTestPackage):
         node = ast.Module(
             body=[
                 self._generate_python_library_ast_node(name="lib"),
-                self._generate_pex_binary_behave_wrapper_node(),
+                self._generate_python_binary_behave_wrapper_node(),
                 self._generate_python_library_resources_ast_node(),
             ]
         )
