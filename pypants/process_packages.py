@@ -32,9 +32,6 @@ logger = logging.getLogger(__name__)
 # Number of workers to use for various multiprocessing pools
 PROCESSES = max(1, os.cpu_count() - 1)
 
-# The directory within a py2sfn project in which to place the BUILD file.
-PY2SFN_BUILD_DIR = "build"
-
 
 class PackageProcessor:
     """Class with methods for processing internal Python packages in order to:
@@ -49,6 +46,18 @@ class PackageProcessor:
         self._targets: Dict[str, PythonPackage] = {}
         # Graph of targets
         self._target_graph: nx.DiGraph = None
+
+    def get_target(self, target_key: str) -> PythonPackage:
+        """Get a registered target by key
+
+        Args:
+            target_key: Key under which the target was registered
+
+        Returns:
+            target/package object
+
+        """
+        return self._targets[target_key]
 
     def register_packages(self) -> None:
         """Register targets and their dependencies.
@@ -67,18 +76,9 @@ class PackageProcessor:
         logger.info("Gathering dependencies")
 
         # Collect a list of (build target, Python module) pairs from *all* the targets
-        target_paths = []
+        target_paths: List[Tuple[PythonPackage, str]] = []
         for target in self._targets.values():
-            for dirpath, dirnames, filenames in os.walk(target.package_path):
-                if os.path.basename(dirpath) in PROJECT_CONFIG.ignore_dirs:
-                    # Empty the list of directories so os.walk does not recur
-                    dirnames.clear()
-                else:
-                    for filename in filenames:
-                        if filename.endswith(".py"):
-                            target_paths.append(
-                                (target, os.path.join(dirpath, filename))
-                            )
+            target_paths.extend(target.find_target_paths())
 
         # Create a pool of workers that will parse imports from each Python module
         # path.
@@ -89,11 +89,6 @@ class PackageProcessor:
                 gather_dependencies_from_module, paths
             )
 
-        # Allow each target to set depencies in one batch. For most targets this will
-        # be a no-op.
-        for target in self._targets.values():
-            target.set_dependencies(self._targets)
-
         # For each target path / package name pair, process and add the dependency to
         # the target's set of dependencies.
         for (target, _), package_names in zip(
@@ -101,6 +96,11 @@ class PackageProcessor:
         ):
             for package_name in package_names:
                 target.add_dependency(self._targets, package_name)
+
+        # Allow each target to set extra dependencies based on their own custom logic.
+        # For most targets this will be a no-op.
+        for target in self._targets.values():
+            target.set_extra_dependencies(self._targets)
 
     def generate_build_files(self, target_pattern: Optional[str] = None) -> None:
         """Generate BUILD files.
@@ -261,8 +261,9 @@ class PackageProcessor:
         consists of a generic ``target`` that only serves to point to the underlying
         tasks.
         """
-        project_paths = Path("stepfunctions/projects").glob("*")
-        for project_path in project_paths:
+        project_paths = Path("stepfunctions/projects").glob("*/project.sfn")
+        for project_sfn in project_paths:
+            project_path = project_sfn.parent
             target = PY2SFNProjectPackage(
                 target_type="py2sfn-project",
                 build_template="py2sfn-project",
@@ -270,7 +271,7 @@ class PackageProcessor:
                 package_dir_name=project_path.name,
                 package_path=str(project_path),
                 package_name=str(project_path),
-                build_dir=str(project_path.joinpath(PY2SFN_BUILD_DIR)),
+                build_dir=str(project_path),
             )
             if target.key in PROJECT_CONFIG.ignore_targets:
                 logger.debug(f"Ignoring {target}")
