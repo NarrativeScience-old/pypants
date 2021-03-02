@@ -62,7 +62,9 @@ class PythonPackage(BuildTarget):
             self.top_dir_name, self.package_dir_name
         )
         self.build_dir = build_dir
-        self.build_file = os.path.join(self.build_dir, "BUILD")
+        self.build_file = PROJECT_CONFIG.config_dir_path.joinpath(
+            self.build_dir, "BUILD"
+        )
         self.package_path = package_path
         self.package_name = package_name
         self.rendered_package_name = (
