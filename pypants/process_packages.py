@@ -145,8 +145,9 @@ class PackageProcessor:
 
         setup_py_paths: List[Tuple[str, Path]] = []
         for top_dir_name in PROJECT_CONFIG.top_dirs:
-            logger.debug(f"Walking {top_dir_name}")
-            for dirpath, dirnames, filenames in os.walk(top_dir_name):
+            top_dir = Path(PROJECT_CONFIG.config_dir_path).joinpath(top_dir_name)
+            logger.debug(f"Walking {top_dir}")
+            for dirpath, dirnames, filenames in os.walk(top_dir):
                 if os.path.basename(dirpath) in PROJECT_CONFIG.ignore_dirs:
                     # Empty the list of directories so os.walk does not recur
                     dirnames.clear()
@@ -198,10 +199,16 @@ class PackageProcessor:
                 target_type="code",
                 build_template=top_dir_name,
                 top_dir_name=top_dir_name,
-                package_dir_name=str(setup_py_path.parent.relative_to(top_dir_name)),
+                package_dir_name=str(
+                    setup_py_path.parent.relative_to(
+                        Path(PROJECT_CONFIG.config_dir_path).joinpath(top_dir_name)
+                    )
+                ),
                 package_path=src_entry.path,
                 package_name=package_name,
-                build_dir=str(src_dir),
+                build_dir=str(
+                    src_dir.relative_to(Path(PROJECT_CONFIG.config_dir_path))
+                ),
                 config=config,
             )
             if target.key in PROJECT_CONFIG.ignore_targets:
