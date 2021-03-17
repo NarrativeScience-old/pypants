@@ -160,7 +160,7 @@ python-versions = "*"
 
 [[package]]
 name = "fluxio-parser"
-version = "0.1.1"
+version = "0.2.0"
 description = "Fluxio parser library"
 category = "main"
 optional = false
@@ -528,7 +528,7 @@ testing = ["pytest (>=3.5,!=3.7.3)", "pytest-checkdocs (>=1.2.3)", "pytest-flake
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.6.1"
-content-hash = "5b308da3be6ca30b0c076a11910b133bcf51f87ae45673997d6a8f346914d7f1"
+content-hash = "732f838d8c22a2276f8df67f1122366a387806840d17f25b58d4564b4ee8a37d"
 
 [metadata.files]
 appdirs = [
@@ -596,8 +596,8 @@ filelock = [
     {file = "filelock-3.0.12.tar.gz", hash = "sha256:18d82244ee114f543149c66a6e0c14e9c4f8a1044b5cdaadd0f82159d6a6ff59"},
 ]
 fluxio-parser = [
-    {file = "fluxio-parser-0.1.1.tar.gz", hash = "sha256:02df140306eb6032b459f3392b33f91e0b88ee3f23a73843226d6296a89fadeb"},
-    {file = "fluxio_parser-0.1.1-py3-none-any.whl", hash = "sha256:f4cd28bd86bd6bbcdd3859500844191b28ccd6c307aec400e177a8184b9b56b7"},
+    {file = "fluxio-parser-0.2.0.tar.gz", hash = "sha256:a11e7b6e24762c88eb41daf59c669fb893375a7a1056170bcdb4a913da67a121"},
+    {file = "fluxio_parser-0.2.0-py3-none-any.whl", hash = "sha256:dfd11859297f586d4f69636dc3518e893036ea4e563843ba0eb7dbd277ac6d99"},
 ]
 future = [
     {file = "future-0.18.2.tar.gz", hash = "sha256:b1bead90b70cf6ec3f0710ae53a525360fa360d306a86583adc6bf83a4db537d"},
