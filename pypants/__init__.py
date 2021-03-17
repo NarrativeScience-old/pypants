@@ -1,3 +1,3 @@
 """CLI for working with Python packages and BUILD files in a Pants monorepo"""
 
-__version__ = "1.30.2"
+__version__ = "1.30.4"
