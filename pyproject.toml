@@ -16,7 +16,7 @@ Click = ">=7.0"
 cookiecutter = "1.7.0"
 networkx = "<3,>=2.2"
 python-slugify = "<2,>=1.2.0"
-fluxio-parser = "<1,>=0.2.0"
+fluxio-parser = ">=0.2.0,<1"
 
 [tool.poetry.dev-dependencies]
 pre-commit = "^2.10.1"
