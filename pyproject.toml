@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pypants"
-version = "1.30.4"
+version = "1.30.5"
 description = "CLI for working with Python packages and BUILD files in a Pants monorepo"
 authors = ["Jonathan Drake <jdrake@narrativescience.com>"]
 license = "BSD-3-Clause"
@@ -9,14 +9,14 @@ homepage = "https://github.com/NarrativeScience/pypants"
 repository = "https://github.com/NarrativeScience/pypants"
 
 [tool.poetry.dependencies]
-python = "^3.6.1"
+python = "^3.6.5"
 astor = "<1,>=0.7.1"
 black = "19.3b0"
 Click = ">=7.0"
 cookiecutter = "1.7.0"
 networkx = "<3,>=2.2"
 python-slugify = "<2,>=1.2.0"
-fluxio-parser = ">=0.2.0,<1"
+fluxio-parser = ">=0.3.1,<1"
 
 [tool.poetry.dev-dependencies]
 pre-commit = "^2.10.1"
