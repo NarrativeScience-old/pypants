@@ -2,7 +2,6 @@
 import ast
 
 from .python_package import PythonPackage
-from .requirement import PythonRequirement
 
 
 class PythonTestPackage(PythonPackage):
@@ -27,21 +26,6 @@ class PythonTestPackage(PythonPackage):
             ast.keyword(arg="sources", value=ast.List(elts=[ast.Str("**/*.py")])),
             self._tags_keyword,
         ]
-        if self.config.include_test_coverage:
-            if self.code_target_package_name is None:
-                # Go through the python_library dependencies and get the package names
-                # Do not include 3rdparty packages
-                code_target_package_names = {
-                    d.package_name
-                    for d in self.dependencies
-                    if not isinstance(d, PythonRequirement)
-                    and d.config.include_test_coverage
-                }
-                # Build the coverage based on the dependency packages
-                elements = [ast.Str(pkg) for pkg in sorted(code_target_package_names)]
-            else:
-                elements = [ast.Str(self.code_target_package_name)]
-            keywords.append(ast.keyword(arg="coverage", value=ast.List(elts=elements)))
         node = ast.Expr(
             value=ast.Call(func=ast.Name(id="python_tests"), args=[], keywords=keywords)
         )
@@ -54,13 +38,13 @@ class PythonTestPackage(PythonPackage):
                 name=self.rendered_package_name, include_extra_dependencies=True
             ),
             self._generate_python_tests_ast_node(),
-            self._generate_python_binary_wrapper_node(
+            self._generate_pex_binary_wrapper_node(
                 "unittest", dependencies=[f":{self.rendered_package_name}"]
             ),
         ]
         if self.config.generate_pytest_binary:
             body.append(
-                self._generate_python_binary_wrapper_node(
+                self._generate_pex_binary_wrapper_node(
                     "pytest", dependencies=[f":{self.rendered_package_name}"]
                 )
             )

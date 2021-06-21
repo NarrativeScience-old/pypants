@@ -45,7 +45,7 @@ class AlembicMigrationPackage(PythonPackage):
         node = ast.Module(
             body=[
                 self._generate_python_library_ast_node(name="lib"),
-                self._generate_python_binary_wrapper_node(
+                self._generate_pex_binary_wrapper_node(
                     "alembic", entry_point="alembic.config", dependencies=[":lib"]
                 ),
                 self._generate_migrations_python_app_ast_node(),
